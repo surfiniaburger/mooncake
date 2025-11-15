@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/*
+ * Copyright (c) 2025 Alora
+ *
+ * Licensed under the MIT License. See LICENSE for details.
+ */
+
 package com.example.advancedmaps3dsamples
 
 import android.content.Intent
