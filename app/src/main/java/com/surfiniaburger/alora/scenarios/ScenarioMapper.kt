@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.scenarios
+package com.surfiniaburger.alora.scenarios
 
 import android.graphics.Color
 import android.util.Log
-import com.example.advancedmaps3dsamples.utils.toHeading
-import com.example.advancedmaps3dsamples.utils.toRange
-import com.example.advancedmaps3dsamples.utils.toRoll
-import com.example.advancedmaps3dsamples.utils.toTilt
+import com.surfiniaburger.alora.utils.toHeading
+import com.surfiniaburger.alora.utils.toRange
+import com.surfiniaburger.alora.utils.toRoll
+import com.surfiniaburger.alora.utils.toTilt
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps3d.model.PolygonOptions
 import com.google.android.gms.maps3d.Map3DOptions

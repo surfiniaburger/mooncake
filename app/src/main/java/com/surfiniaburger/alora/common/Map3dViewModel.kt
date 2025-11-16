@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.common
+package com.surfiniaburger.alora.common
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.advancedmaps3dsamples.utils.CameraUpdate
-import com.example.advancedmaps3dsamples.utils.copy
-import com.example.advancedmaps3dsamples.utils.toCameraUpdate
-import com.example.advancedmaps3dsamples.utils.toHeading
-import com.example.advancedmaps3dsamples.utils.toRange
-import com.example.advancedmaps3dsamples.utils.toRoll
-import com.example.advancedmaps3dsamples.utils.toTilt
-import com.example.advancedmaps3dsamples.utils.toValidCamera
+import com.surfiniaburger.alora.utils.CameraUpdate
+import com.surfiniaburger.alora.utils.copy
+import com.surfiniaburger.alora.utils.toCameraUpdate
+import com.surfiniaburger.alora.utils.toHeading
+import com.surfiniaburger.alora.utils.toRange
+import com.surfiniaburger.alora.utils.toRoll
+import com.surfiniaburger.alora.utils.toTilt
+import com.surfiniaburger.alora.utils.toValidCamera
 import com.google.android.gms.maps3d.GoogleMap3D
 import com.google.android.gms.maps3d.OnCameraChangedListener
 import com.google.android.gms.maps3d.model.Camera
@@ -403,7 +403,7 @@ abstract class Map3dViewModel : ViewModel() {
 
   suspend fun awaitCameraUpdate(cameraUpdate: CameraUpdate) {
     _googleMap3D.value?.let { controller ->
-      com.example.advancedmaps3dsamples.utils.awaitCameraUpdate(controller, cameraUpdate)
+      com.surfiniaburger.alora.utils.awaitCameraUpdate(controller, cameraUpdate)
     }
   }
 }

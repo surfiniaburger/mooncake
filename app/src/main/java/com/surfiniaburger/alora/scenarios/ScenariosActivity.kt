@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.scenarios
+package com.surfiniaburger.alora.scenarios
 
 import android.content.Intent
 import android.os.Bundle
@@ -60,13 +60,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.advancedmaps3dsamples.R
-import com.example.advancedmaps3dsamples.ui.theme.AdvancedMaps3DSamplesTheme
-import com.example.advancedmaps3dsamples.utils.DEFAULT_ROLL
-import com.example.advancedmaps3dsamples.utils.toHeading
-import com.example.advancedmaps3dsamples.utils.toRange
-import com.example.advancedmaps3dsamples.utils.toRoll
-import com.example.advancedmaps3dsamples.utils.toTilt
+import com.surfiniaburger.alora.R
+import com.surfiniaburger.alora.ui.theme.AloraTheme
+import com.surfiniaburger.alora.utils.DEFAULT_ROLL
+import com.surfiniaburger.alora.utils.toHeading
+import com.surfiniaburger.alora.utils.toRange
+import com.surfiniaburger.alora.utils.toRoll
+import com.surfiniaburger.alora.utils.toTilt
 import com.google.android.gms.maps3d.model.Camera
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
@@ -95,7 +95,7 @@ class ScenariosActivity : ComponentActivity() {
 
       val cameraAttribute by viewModel.trackedAttribute.collectAsStateWithLifecycle()
 
-      AdvancedMaps3DSamplesTheme(
+      AloraTheme(
         dynamicColor = false
       ) {
         Scaffold(
@@ -317,7 +317,7 @@ private fun OverlayButton(
 @Preview
 @Composable
 fun FinishedOverlayCompose() {
-  AdvancedMaps3DSamplesTheme {
+  AloraTheme {
     FinishedOverlay(
       onExitClick = {},
       onRepeatClick = {},
@@ -331,7 +331,7 @@ fun FinishedOverlayCompose() {
 @Preview
 @Composable
 fun OverlayButtonPreview() {
-  AdvancedMaps3DSamplesTheme {
+  AloraTheme {
     val size = 72.dp
     val modifier = Modifier.size(size)
 

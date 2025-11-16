@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.ui.theme
+package com.surfiniaburger.alora.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -47,7 +47,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun AdvancedMaps3DSamplesTheme(
+fun AloraTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,

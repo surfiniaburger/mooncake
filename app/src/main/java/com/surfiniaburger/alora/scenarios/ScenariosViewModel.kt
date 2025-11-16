@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.scenarios
+package com.surfiniaburger.alora.scenarios
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.advancedmaps3dsamples.common.Map3dViewModel
+import com.surfiniaburger.alora.common.Map3dViewModel
 import com.google.android.gms.maps3d.model.Camera
 import com.google.android.gms.maps3d.model.camera
 import com.google.android.gms.maps3d.model.flyToOptions
@@ -33,10 +33,10 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import com.example.advancedmaps3dsamples.utils.DEFAULT_ROLL
-import com.example.advancedmaps3dsamples.utils.toCameraString
-import com.example.advancedmaps3dsamples.R
-import com.example.advancedmaps3dsamples.utils.copy
+import com.surfiniaburger.alora.utils.DEFAULT_ROLL
+import com.surfiniaburger.alora.utils.toCameraString
+import com.surfiniaburger.alora.R
+import com.surfiniaburger.alora.utils.copy
 import com.google.android.gms.maps3d.model.flyAroundOptions
 
 enum class CameraAttribute(val labelId: Int) {

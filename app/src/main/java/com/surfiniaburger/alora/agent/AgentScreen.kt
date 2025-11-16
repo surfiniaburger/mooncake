@@ -1,4 +1,4 @@
-package com.example.advancedmaps3dsamples.agent
+package com.surfiniaburger.alora.agent
 
 import android.os.Bundle
 import android.util.Log
@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.example.advancedmaps3dsamples.R
-import com.example.advancedmaps3dsamples.ui.theme.AdvancedMaps3DSamplesTheme
+import com.surfiniaburger.alora.R
+import com.surfiniaburger.alora.ui.theme.AloraTheme
 import com.google.android.gms.maps3d.GoogleMap3D
 import com.google.android.gms.maps3d.Map3DOptions
 import com.google.android.gms.maps3d.Map3DView
@@ -172,7 +172,7 @@ private fun AgentMapView(
 @Preview
 @Composable
 fun AgentScreenPreview() {
-    AdvancedMaps3DSamplesTheme {
+    AloraTheme {
         AgentScreen()
     }
 }

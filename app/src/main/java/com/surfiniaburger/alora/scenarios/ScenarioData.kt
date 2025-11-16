@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.scenarios
+package com.surfiniaburger.alora.scenarios
 
-import com.example.advancedmaps3dsamples.R
+import com.surfiniaburger.alora.R
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.ktx.utils.latLngListEncode
 

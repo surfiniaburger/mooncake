@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.utils
+package com.surfiniaburger.alora.utils
 
 
 import android.content.res.Resources
@@ -22,7 +22,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.res.stringResource
-import com.example.advancedmaps3dsamples.R
+import com.surfiniaburger.alora.R
 
 const val METERS_PER_FOOT = 3.28084
 const val METERS_PER_KILOMETER = 1_000
