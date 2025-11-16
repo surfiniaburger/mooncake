@@ -13,3 +13,4 @@ secrets.properties
 !.idea/codeStyles/
 !.idea/runConfigurations/
 
+*.log
