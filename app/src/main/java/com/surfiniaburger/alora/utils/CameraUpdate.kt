@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.utils
+package com.surfiniaburger.alora.utils
 
 import com.google.android.gms.maps3d.GoogleMap3D
 import com.google.android.gms.maps3d.OnCameraAnimationEndListener

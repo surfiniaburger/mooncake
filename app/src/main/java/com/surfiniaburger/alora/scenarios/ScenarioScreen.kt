@@ -12,14 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.ui.theme
+package com.surfiniaburger.alora.scenarios
 
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.google.android.gms.maps3d.GoogleMap3D
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+@Composable
+fun ScenarioScreen(
+  scenario: Scenario,
+  viewModel: ScenariosViewModel,
+  modifier: Modifier = Modifier,
+) {
+    ThreeDMap(
+      modifier = modifier,
+      options = scenario.mapsOptions,
+      viewModel = viewModel,
+    )
+}

@@ -1,15 +1,15 @@
-package com.example.advancedmaps3dsamples.agent
+package com.surfiniaburger.alora.agent
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.advancedmaps3dsamples.ui.theme.AdvancedMaps3DSamplesTheme
+import com.surfiniaburger.alora.ui.theme.AloraTheme
 
 class AgentActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AdvancedMaps3DSamplesTheme {
+            AloraTheme {
                 AgentScreen()
             }
         }

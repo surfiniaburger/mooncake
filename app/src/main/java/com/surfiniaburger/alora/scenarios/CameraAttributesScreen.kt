@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.example.advancedmaps3dsamples.scenarios
+package com.surfiniaburger.alora.scenarios
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
@@ -32,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.advancedmaps3dsamples.utils.wrapIn
+import com.surfiniaburger.alora.utils.wrapIn
 import com.google.android.gms.maps3d.GoogleMap3D
 
 private val headingSliderRange = -180f..180f

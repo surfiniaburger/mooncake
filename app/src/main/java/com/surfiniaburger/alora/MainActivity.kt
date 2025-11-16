@@ -18,7 +18,7 @@
  * Licensed under the MIT License. See LICENSE for details.
  */
 
-package com.example.advancedmaps3dsamples
+package com.surfiniaburger.alora
 
 import android.content.Intent
 import android.os.Bundle
@@ -45,9 +45,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.advancedmaps3dsamples.agent.AgentActivity
-import com.example.advancedmaps3dsamples.scenarios.ScenariosActivity
-import com.example.advancedmaps3dsamples.ui.theme.AdvancedMaps3DSamplesTheme
+import com.surfiniaburger.alora.agent.AgentActivity
+import com.surfiniaburger.alora.scenarios.ScenariosActivity
+import com.surfiniaburger.alora.ui.theme.AloraTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 data class MapSample(@StringRes val label: Int, val clazz: Class<*>)
@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AdvancedMaps3DSamplesTheme {
+            AloraTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {

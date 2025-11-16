@@ -28,11 +28,11 @@ android {
     lint {
         sarifOutput = layout.buildDirectory.file("reports/lint-results.sarif").get().asFile
     }
-    namespace = "com.example.advancedmaps3dsamples"
+    namespace = "com.surfiniaburger.alora"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.advancedmaps3dsamples"
+        applicationId = "com.surfiniaburger.alora"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1

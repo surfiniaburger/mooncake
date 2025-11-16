@@ -18,7 +18,7 @@
  * Licensed under the MIT License. See LICENSE for details.
  */
 
-package com.example.advancedmaps3dsamples
+package com.surfiniaburger.alora
 
 import android.app.Application
 import android.content.pm.PackageManager
@@ -28,7 +28,7 @@ import dagger.hilt.android.HiltAndroidApp
 import java.util.Objects
 
 @HiltAndroidApp
-class Maps3DAdvancedApplication : Application() {
+class AloraApplication : Application() {
     val TAG = this::class.java.simpleName
 
     override fun onCreate() {
