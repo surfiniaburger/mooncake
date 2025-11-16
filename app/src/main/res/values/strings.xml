@@ -15,7 +15,7 @@
 -->
 
 <resources>
-    <string name="app_name">Advanced Maps 3D Samples</string>
+    <string name="app_name">Alora</string>
 
     <string name="map_sample_title" translatable="false">3D Map Samples</string>
     <string name="map_sample_scenarios" translatable="false">Scenarios (video visuals)</string>

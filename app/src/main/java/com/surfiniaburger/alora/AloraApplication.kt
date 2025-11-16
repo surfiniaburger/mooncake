@@ -28,7 +28,7 @@ import dagger.hilt.android.HiltAndroidApp
 import java.util.Objects
 
 @HiltAndroidApp
-class Maps3DAdvancedApplication : Application() {
+class AloraApplication : Application() {
     val TAG = this::class.java.simpleName
 
     override fun onCreate() {
