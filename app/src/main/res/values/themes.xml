@@ -17,5 +17,5 @@
 
 <resources>
 
-    <style name="Theme.AdvancedMaps3DSamples" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.AloraTheme" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
