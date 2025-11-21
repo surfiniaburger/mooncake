@@ -71,9 +71,22 @@ class RaceStrategyRepository @Inject constructor() {
                             trySend("Error: Could not parse result.")
                         }
                     }
+                    "log", "notifications/message" -> {
+                        try {
+                            // Try to parse as JSON first to extract "message" field if it exists
+                            val content = JSONObject(data).optString("message", data)
+                            trySend(content)
+                        } catch (e: Exception) {
+                            // If not JSON or parsing fails, just send the raw data
+                            trySend(data)
+                        }
+                    }
                     "error" -> {
                         Log.e("RaceStrategyRepo", "Received error event: $data")
                         trySend("Error: $data")
+                    }
+                    else -> {
+                        Log.d("RaceStrategyRepo", "Unhandled event type: $type, data: $data")
                     }
                 }
             }
