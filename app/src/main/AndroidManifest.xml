@@ -48,10 +48,6 @@
         </activity>
 
         <activity
-            android:name=".scenarios.ScenariosActivity"
-            android:exported="true"
-            />
-        <activity
             android:name=".agent.AgentActivity"
             android:exported="true"
             />
