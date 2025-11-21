@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.dagger)
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.play.services.base)
     implementation(libs.play.services.maps3d)
@@ -97,6 +98,8 @@ dependencies {
     implementation(libs.maps.utils.ktx)
 
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.sse)
 }
 
 secrets {

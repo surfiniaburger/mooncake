@@ -1,17 +1,3 @@
-// Copyright 2025 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 /*
  * Copyright (c) 2025 Alora
  *
@@ -20,95 +6,62 @@
 
 package com.surfiniaburger.alora
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.surfiniaburger.alora.agent.AgentActivity
-import com.surfiniaburger.alora.scenarios.ScenariosActivity
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.surfiniaburger.alora.scenarios.ScenarioScreen
+import com.surfiniaburger.alora.scenarios.ScenariosViewModel
+import com.surfiniaburger.alora.ui.RaceHud
 import com.surfiniaburger.alora.ui.theme.AloraTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-data class MapSample(@StringRes val label: Int, val clazz: Class<*>)
-
-private val samples =
-    listOf(
-        MapSample(R.string.map_sample_scenarios, ScenariosActivity::class.java),
-        MapSample(R.string.map_sample_alora_agent, AgentActivity::class.java),
-    )
-
-@OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val viewModel: ScenariosViewModel = hiltViewModel()
+            val viewState by viewModel.viewState.collectAsStateWithLifecycle()
+            val strategyResult by viewModel.strategyResult.collectAsStateWithLifecycle()
+
+            // Set the scenario to "race_strategy" when the app starts
+            LaunchedEffect(Unit) {
+                viewModel.setScenario("race_strategy")
+            }
+
             AloraTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = {
-                        CenterAlignedTopAppBar(
-                            title = { Text(stringResource(R.string.map_sample_title)) }
-                        )
-                    }
-                ) { innerPadding ->
-                    Column(
-                        modifier =
-                            Modifier
-                                .padding(innerPadding)
-                                .windowInsetsPadding(WindowInsets.navigationBars)
-                                .fillMaxSize() // Make the column take up the whole screen
-                                .padding(16.dp), // Add some overall padding to the column
-                        verticalArrangement = Arrangement.spacedBy(8.dp), // Add vertical spacing between items
-                    ) {
-                        for (sample in samples) {
-                            Sample(
-                                sample = sample,
-                                onClick = { launchActivity(sample.clazz) },
-                                modifier = Modifier.fillMaxWidth(),
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+                        viewState.scenario?.let { scenario ->
+                            ScenarioScreen(
+                                modifier = Modifier.fillMaxSize(),
+                                scenario = scenario,
+                                viewModel = viewModel,
+                            )
+                            RaceHud(
+                                strategyText = strategyResult,
+                                onRunSimulation = {
+                                    viewModel.flyToBarber()
+                                    viewModel.runSimulation()
+                                },
+                                modifier = Modifier.align(Alignment.TopStart)
                             )
                         }
                     }
                 }
             }
         }
-
     }
-
-    private fun launchActivity(clazz: Class<*>) {
-        try {
-            startActivity(Intent(this, clazz))
-        } catch (e: ClassNotFoundException) {
-            Log.e("SamplesMenu", "Activity not found: $clazz", e)
-            Toast.makeText(this, "Activity not found: $clazz", Toast.LENGTH_SHORT).show()
-        }
-    }
-}
-
-
-@Composable
-fun Sample(sample: MapSample, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Button(modifier = modifier, onClick = onClick) { Text(text = stringResource(sample.label)) }
 }

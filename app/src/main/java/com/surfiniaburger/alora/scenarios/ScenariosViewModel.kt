@@ -17,6 +17,7 @@ package com.surfiniaburger.alora.scenarios
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.surfiniaburger.alora.common.Map3dViewModel
+import com.surfiniaburger.alora.data.RaceStrategyRepository
 import com.google.android.gms.maps3d.model.Camera
 import com.google.android.gms.maps3d.model.camera
 import com.google.android.gms.maps3d.model.flyToOptions
@@ -29,6 +30,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -68,7 +70,9 @@ private val NEUSCHWANSTEIN_CAMERA = camera {
 }
 
 @HiltViewModel
-class ScenariosViewModel @Inject constructor() : Map3dViewModel() {
+class ScenariosViewModel @Inject constructor(
+  private val repository: RaceStrategyRepository
+) : Map3dViewModel() {
   override val TAG = this::class.java.simpleName
   private val _viewState = MutableStateFlow(ScenarioViewState())
   val viewState = _viewState as StateFlow<ScenarioViewState>
@@ -79,6 +83,23 @@ class ScenariosViewModel @Inject constructor() : Map3dViewModel() {
 
   private val _roll = MutableStateFlow(DEFAULT_ROLL)
   val roll = _roll as StateFlow<Double>
+
+  private val _strategyResult = MutableStateFlow("")
+  val strategyResult = _strategyResult.asStateFlow()
+
+  private val BARBER_COORDS = latLngAltitude {
+    latitude = 33.5325
+    longitude = -86.6189
+    altitude = 500.0
+  }
+
+  private val BARBER_CAMERA = camera {
+    center = BARBER_COORDS
+    heading = 0.0
+    tilt = 45.0
+    range = 1500.0
+    roll = 0.0
+  }
 
   init {
     viewModelScope.launch {
@@ -455,5 +476,43 @@ class ScenariosViewModel @Inject constructor() : Map3dViewModel() {
 
   fun closeOverlay() {
     _viewState.value = viewState.value.copy(showFinished = false)
+  }
+
+  fun flyToBarber() {
+    viewModelScope.launch {
+      // Stop any existing animations
+      animationJob?.cancel()
+      
+      // Fly to Barber Motorsports Park
+      awaitFlyTo(
+        flyToOptions {
+          endCamera = BARBER_CAMERA
+          durationInMillis = 5000
+        }
+      )
+      
+      // Start orbiting
+      flyAroundCurrentCenter(1.0, 60.seconds)
+    }
+  }
+
+  fun runSimulation() {
+    viewModelScope.launch {
+      _strategyResult.value = "Initializing Simulation..."
+
+      // Launch a coroutine to collect events from the repository and update the UI
+      launch {
+        repository.getRaceStrategy().collect { resultFromServer ->
+          _strategyResult.value = resultFromServer
+        }
+      }
+
+      // Wait a moment for the SSE connection to be established
+      delay(2000)
+
+      // Now, trigger the simulation. The result will be collected by the coroutine above.
+      _strategyResult.value = "Running Monte Carlo..."
+      repository.triggerSimulation()
+    }
   }
 }
