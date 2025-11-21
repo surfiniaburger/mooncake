@@ -76,7 +76,7 @@ class RaceStrategyRepository @Inject constructor() {
                             // Try to parse as JSON first to extract "message" field if it exists
                             val content = JSONObject(data).optString("message", data)
                             trySend(content)
-                        } catch (e: Exception) {
+} catch (e: org.json.JSONException) {
                             // If not JSON or parsing fails, just send the raw data
                             trySend(data)
                         }
