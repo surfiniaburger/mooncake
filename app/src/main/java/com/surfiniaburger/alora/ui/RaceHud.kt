@@ -32,7 +32,7 @@ fun RaceHud(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = "RACE ENGINEER AI",
-                color = Color.Red,
+                color = MaterialTheme.colorScheme.error,
                 fontWeight = FontWeight.Bold,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -48,7 +48,7 @@ fun RaceHud(
             
             Button(
                 onClick = onRunSimulation,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
                 Text("RUN SIMULATION")
             }

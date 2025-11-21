@@ -129,6 +129,14 @@ class ScenariosViewModel @Inject constructor(
         }
       }
     }
+
+    // Initialize SSE connection once
+    viewModelScope.launch {
+      _strategyResult.value = "Connecting to Race Control..."
+      repository.getRaceStrategy().collect { resultFromServer ->
+        _strategyResult.value = resultFromServer
+      }
+    }
   }
 
   /**
@@ -498,20 +506,7 @@ class ScenariosViewModel @Inject constructor(
 
   fun runSimulation() {
     viewModelScope.launch {
-      _strategyResult.value = "Initializing Simulation..."
-
-      // Launch a coroutine to collect events from the repository and update the UI
-      launch {
-        repository.getRaceStrategy().collect { resultFromServer ->
-          _strategyResult.value = resultFromServer
-        }
-      }
-
-      // Wait a moment for the SSE connection to be established
-      delay(2000)
-
-      // Now, trigger the simulation. The result will be collected by the coroutine above.
-      _strategyResult.value = "Running Monte Carlo..."
+      _strategyResult.value = "Requesting Simulation..."
       repository.triggerSimulation()
     }
   }

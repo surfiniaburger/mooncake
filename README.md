@@ -80,4 +80,4 @@ The application communicates with a backend service hosted on Hugging Face Space
 -   `scenarios/ScenariosViewModel.kt`: The core ViewModel that manages the camera, triggers the simulation, and holds the state for the UI.
 -   `data/RaceStrategyRepository.kt`: Handles all network communication with the backend, including establishing the SSE connection and calling the simulation tool.
 -   `ui/RaceHud.kt`: A self-contained Jetpack Compose function that renders the "RACE ENGINEER AI" heads-up display.
--   `server.py` & `gcs_utils.py`: Python scripts related to the backend server logic, including authentication and downloading assets from Google Cloud Storage.
+-   `server.py` & `gcs_utils.py`: Python scripts related to the backend server logic (not part of the Android client).

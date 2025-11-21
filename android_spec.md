@@ -84,6 +84,16 @@ val json = """
 """
 
 val body = json.toRequestBody("application/json".toMediaType())
-val postRequest = Request.Builder().url(postEndpoint!!).post(body).build()
-client.newCall(postRequest).execute()
+postEndpoint?.let { endpoint ->
+    val postRequest = Request.Builder().url(endpoint).post(body).build()
+    client.newCall(postRequest).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            println("Request failed: ${e.message}")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            println("Response code: ${response.code}")
+        }
+    })
+}
 ```

@@ -3,7 +3,9 @@ package com.surfiniaburger.alora.data
 import android.util.Log
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -27,9 +29,11 @@ class RaceStrategyRepository @Inject constructor() {
         .readTimeout(0, TimeUnit.MILLISECONDS)
         .build()
 
-    private val sseUrl = "https://surfiniaburger-monte-carlo-sim.hf.space/sse"
+    private val BASE_URL = "https://surfiniaburger-monte-carlo-sim.hf.space"
+    private val sseUrl = "$BASE_URL/sse"
     private var postEndpoint: String? = null
     private var eventSource: EventSource? = null
+    private val _isInitialized = MutableStateFlow(false)
 
     fun getRaceStrategy(): Flow<String> = callbackFlow {
         val request = Request.Builder()
@@ -48,9 +52,13 @@ class RaceStrategyRepository @Inject constructor() {
                 Log.d("RaceStrategyRepo", "Event received: type=$type, data=$data")
                 when (type) {
                     "endpoint" -> {
-                        postEndpoint = "https://surfiniaburger-monte-carlo-sim.hf.space" + data
+                        postEndpoint = BASE_URL + data
                         trySend("Connected. Initializing...")
                         initializeSession()
+                    }
+                    "initialized" -> {
+                        _isInitialized.value = true
+                        trySend("Session Initialized. Ready.")
                     }
                     "tool_result" -> {
                         // The final result from the simulation comes here.
@@ -88,6 +96,7 @@ class RaceStrategyRepository @Inject constructor() {
         awaitClose {
             Log.d("RaceStrategyRepo", "Closing SSE connection.")
             eventSource?.cancel()
+            _isInitialized.value = false
         }
     }
 
@@ -107,10 +116,16 @@ class RaceStrategyRepository @Inject constructor() {
         sendPostRequest(json)
     }
 
-    fun triggerSimulation() {
+    suspend fun triggerSimulation() {
         if (postEndpoint == null) {
             Log.e("RaceStrategyRepo", "Cannot trigger simulation, postEndpoint is null.")
             return
+        }
+        
+        // Wait for initialization
+        if (!_isInitialized.value) {
+             Log.d("RaceStrategyRepo", "Waiting for initialization...")
+             _isInitialized.first { it }
         }
 
         val json = """
