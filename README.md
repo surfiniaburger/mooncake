@@ -27,9 +27,9 @@ This project showcases a modern Android architecture, integration with a custom 
 
 ## Backend Integration
 
-The application communicates with a backend service hosted on Hugging Face Spaces, which exposes a tool-using agent over the **Model Context Protocol (MCP)**.
+The application communicates with a backend service hosted on Google Cloud Run, which exposes a tool-using agent over the **Model Context Protocol (MCP)**.
 
-- **URL:** `https://surfiniaburger-monte-carlo-sim.hf.space`
+- **URL:** `https://monte-carlo-mcp-server-684569726907.us-central1.run.app`
 - **Protocol:** Server-Sent Events (SSE)
 - **Tool:** The app calls the `find_optimal_pit_window` tool to run the simulation.
 
