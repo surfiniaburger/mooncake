@@ -29,7 +29,7 @@ class RaceStrategyRepository @Inject constructor() {
         .readTimeout(0, TimeUnit.MILLISECONDS)
         .build()
 
-    private val BASE_URL = "https://surfiniaburger-monte-carlo-sim.hf.space"
+    private val BASE_URL = "https://monte-carlo-mcp-server-684569726907.us-central1.run.app"
     private val sseUrl = "$BASE_URL/sse"
     private var postEndpoint: String? = null
     private var eventSource: EventSource? = null
@@ -141,18 +141,27 @@ class RaceStrategyRepository @Inject constructor() {
              _isInitialized.first { it }
         }
 
-        val json = """
-        {
-            "jsonrpc": "2.0",
-            "id": 1,
-            "method": "tools/call",
-            "params": {
-                "name": "find_optimal_pit_window",
-                "arguments": {}
+        val strategies = listOf("1-stop", "2-stop", "3-stop")
+        
+        strategies.forEach { strategyName ->
+            val json = """
+            {
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {
+                    "name": "find_optimal_pit_window",
+                    "arguments": {
+                        "strategy_name": "$strategyName"
+                    }
+                }
             }
+            """
+            // Launch each request in a separate coroutine scope or just fire-and-forget via enqueue
+            // Since sendPostRequest uses enqueue (async), we can just call it in a loop.
+            Log.d("RaceStrategyRepo", "Triggering simulation for strategy: $strategyName")
+            sendPostRequest(json)
         }
-        """
-        sendPostRequest(json)
     }
 
     private fun sendPostRequest(json: String) {

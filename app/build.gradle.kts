@@ -30,6 +30,14 @@ android {
     }
     namespace = "com.surfiniaburger.alora"
     compileSdk = libs.versions.compileSdk.get().toInt()
+    signingConfigs {
+        create("release") {
+            storeFile = file("../release-keystore.jks")
+            storePassword = System.getenv("ALORA_KEYSTORE_PASSWORD") ?: "CHANGE_ME"
+            keyAlias = "alora_release"
+            keyPassword = System.getenv("ALORA_KEY_PASSWORD") ?: "CHANGE_ME"
+        }
+    }
 
     defaultConfig {
         applicationId = "com.surfiniaburger.alora"
@@ -38,6 +46,15 @@ android {
         versionCode = 1
         versionName = "1.3.0"
 
+        // 1. Get the key
+        val mapsApiKey = System.getenv("MAPS_API_KEY") ?: ""
+
+        // 2. Pass it to BuildConfig (for your code)
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
+
+        // 3. Pass it to the Manifest (FIX FOR YOUR ERROR)
+        manifestPlaceholders["MAPS3D_API_KEY"] = mapsApiKey
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -45,7 +62,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
