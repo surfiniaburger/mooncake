@@ -143,11 +143,11 @@ class RaceStrategyRepository @Inject constructor() {
 
         val strategies = listOf("1-stop", "2-stop", "3-stop")
         
-        strategies.forEach { strategyName ->
+        strategies.forEachIndexed { index, strategyName ->
             val json = """
             {
                 "jsonrpc": "2.0",
-                "id": 1,
+                "id": ${index + 1},
                 "method": "tools/call",
                 "params": {
                     "name": "find_optimal_pit_window",

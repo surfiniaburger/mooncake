@@ -1,5 +1,7 @@
 package com.surfiniaburger.alora
 
+import com.google.gson.JsonParser
+import com.google.gson.JsonObject
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -54,8 +56,9 @@ class ServerConnectivityUnitTest {
                     initializeSession(postEndpoint!!)
                 } else if (type == "message") {
                     try {
-                        // Check for initialization confirmation
-                        if ((data.contains("\"id\":0") || data.contains("\"id\": 0")) && data.contains("\"result\"")) {
+                        // Parse JSON to check for initialization confirmation
+                        val json = JsonParser.parseString(data).asJsonObject
+                        if (json.has("id") && json.get("id").asInt == 0 && json.has("result")) {
                             println("ServerTest: Initialization confirmed!")
                             isInitialized = true
                             status.append("Initialized. ")
@@ -118,11 +121,11 @@ class ServerConnectivityUnitTest {
     private fun triggerSimulation(endpoint: String) {
         val strategies = listOf("1-stop", "2-stop", "3-stop")
         
-        strategies.forEach { strategyName ->
+        strategies.forEachIndexed { index, strategyName ->
             val json = """
             {
                 "jsonrpc": "2.0",
-                "id": 1,
+                "id": ${index + 1},
                 "method": "tools/call",
                 "params": {
                     "name": "find_optimal_pit_window",
