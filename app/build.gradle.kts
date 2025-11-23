@@ -33,9 +33,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("../release-keystore.jks")
-            storePassword = System.getenv("ALORA_KEYSTORE_PASSWORD") ?: "CHANGE_ME"
+            storePassword = System.getenv("ALORA_KEYSTORE_PASSWORD") ?: error("ALORA_KEYSTORE_PASSWORD environment variable not set")
             keyAlias = "alora_release"
-            keyPassword = System.getenv("ALORA_KEY_PASSWORD") ?: "CHANGE_ME"
+            keyPassword = System.getenv("ALORA_KEY_PASSWORD") ?: error("ALORA_KEY_PASSWORD environment variable not set")
         }
     }
 
@@ -47,7 +47,7 @@ android {
         versionName = "1.3.0"
 
         // 1. Get the key
-        val mapsApiKey = System.getenv("MAPS_API_KEY") ?: ""
+        val mapsApiKey = System.getenv("MAPS_API_KEY") ?: error("MAPS_API_KEY environment variable not set")
 
         // 2. Pass it to BuildConfig (for your code)
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
@@ -119,6 +119,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.okhttp)
     implementation(libs.okhttp.sse)
+    testImplementation(libs.gson)
 }
 
 secrets {

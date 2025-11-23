@@ -9,9 +9,11 @@ BASE_URL = "https://monte-carlo-mcp-server-684569726907.us-central1.run.app"
 SSE_URL = f"{BASE_URL}/sse"
 POST_ENDPOINT = None
 SESSION_INITIALIZED = False
+FIRST_STRATEGY_LATENCY = None
+START_TIME = None
 
 def on_event(event_type, data):
-    global POST_ENDPOINT, SESSION_INITIALIZED
+    global POST_ENDPOINT, SESSION_INITIALIZED, FIRST_STRATEGY_LATENCY, START_TIME
     # print(f"Event: {event_type}, Data: {data}")
 
     if event_type == "endpoint":
@@ -28,6 +30,9 @@ def on_event(event_type, data):
             pass
     elif event_type == "tool_result":
         print(f"Tool Result Received: {data[:100]}...") # Print first 100 chars
+        if START_TIME and FIRST_STRATEGY_LATENCY is None:
+            FIRST_STRATEGY_LATENCY = (time.time() - START_TIME) * 1000
+            print(f"First strategy received in {FIRST_STRATEGY_LATENCY:.0f}ms")
 
 def initialize_session():
     if not POST_ENDPOINT:
@@ -46,6 +51,7 @@ def initialize_session():
     send_post(payload)
 
 def trigger_simulation():
+    global START_TIME
     if not POST_ENDPOINT:
         print("Cannot trigger simulation: No endpoint")
         return
@@ -60,6 +66,7 @@ def trigger_simulation():
         }
     }
     print("Triggering simulation...")
+    START_TIME = time.time()
     send_post(payload)
 
 def send_post(payload):

@@ -16,6 +16,5 @@ secrets.properties
 *.log
 .env
 # Android release keystore – keep it secret
-release‑keystore.jks
-*/release‑keystore.jks
-*release-keystore.jks
+release-keystore.jks
+*/release-keystore.jks
