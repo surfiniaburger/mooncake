@@ -422,7 +422,7 @@ fun String.toPolyline(idp: String? = null): List<PolylineOptions> {
     }
 
     // Detect if this is raw coordinates (contains commas and newlines) or encoded polyline
-    val isRawCoordinates = input.contains(",") && (input.contains("\n") || input.lines().size > 1)
+    val isRawCoordinates = input.contains(",")
     
     // 1. Parse coordinates - either raw or encoded
     val decodedLatLngs: List<LatLng> = if (isRawCoordinates) {
