@@ -1,0 +1,2 @@
+
+11220643C100492733à°…Ó*	arm64-v8a*armeabi-v7a*armeabi2INFINIX:11220643C1004927RInfinix X6528
