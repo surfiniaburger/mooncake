@@ -473,6 +473,10 @@ fun String.toPolyline(idp: String? = null): List<PolylineOptions> {
     val redColor = Color.RED
     val blackTransparentColor = Color.argb(128, 0, 0, 0)
 
+    // Define z-index values for clarity
+    val foregroundZIndex = 5f
+    val backgroundZIndex = 3f
+
     // Foreground (Red)
     val polylineOptionsForeground = polylineOptions {
         this.id = id
@@ -480,7 +484,7 @@ fun String.toPolyline(idp: String? = null): List<PolylineOptions> {
         strokeColor = redColor
         strokeWidth = 7.0
         altitudeMode = AltitudeMode.CLAMP_TO_GROUND
-        zIndex = 5
+        zIndex = foregroundZIndex
         drawsOccludedSegments = true
     }
 
@@ -491,7 +495,7 @@ fun String.toPolyline(idp: String? = null): List<PolylineOptions> {
         strokeColor = blackTransparentColor
         strokeWidth = 13.0
         altitudeMode = AltitudeMode.CLAMP_TO_GROUND
-        zIndex = 3
+        zIndex = backgroundZIndex
         drawsOccludedSegments = true
     }
 
