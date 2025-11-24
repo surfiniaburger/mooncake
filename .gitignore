@@ -18,3 +18,5 @@ secrets.properties
 # Android release keystore – keep it secret
 release-keystore.jks
 */release-keystore.jks
+maps-samples/
+**/build/
