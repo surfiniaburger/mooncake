@@ -40,4 +40,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Advanced Maps 3D Samples"
 include(":app")
+include(":macrobenchmark")
  
