@@ -17,6 +17,8 @@ package com.surfiniaburger.alora.common
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.surfiniaburger.alora.utils.CameraUpdate
 import com.surfiniaburger.alora.utils.copy
 import com.surfiniaburger.alora.utils.toCameraUpdate
@@ -247,15 +249,6 @@ abstract class Map3dViewModel : ViewModel() {
     activeMapObjects.clear()
   }
 
-  private fun addMapObject(mapObject: MapObject) {
-    mapObjects[mapObject.id] = mapObject // No need to remove the old as the map will replace it
-    _googleMap3D.value?.also { controller ->
-      mapObject.addToMap(controller)?.also { activeObject ->
-        activeMapObjects[mapObject.id] = activeObject
-      }
-    }
-  }
-
   fun addMarker(options: MarkerOptions) {
     addMapObject(MapObject.Marker(options))
   }
@@ -268,7 +261,21 @@ abstract class Map3dViewModel : ViewModel() {
   }
 
   fun addPolyline(polylineOptions: PolylineOptions) {
-    addMapObject(MapObject.Polyline(polylineOptions))
+    viewModelScope.launch {
+        delay(100) // Small delay to ensure the map is ready for the polyline
+        addMapObject(MapObject.Polyline(polylineOptions))
+    }
+  }
+
+  private fun addMapObject(mapObject: MapObject) {
+    mapObjects[mapObject.id] = mapObject // No need to remove the old as the map will replace it
+    val controller = _googleMap3D.value
+    if (controller != null) {
+      val activeObject = mapObject.addToMap(controller)
+      if (activeObject != null) {
+        activeMapObjects[mapObject.id] = activeObject
+      }
+    }
   }
 
   fun addPolygon(polygonOptions: PolygonOptions) {

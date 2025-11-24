@@ -20,10 +20,9 @@ android {
         // for easy local/CI testing.
         create("benchmark") {
             isDebuggable = false
-            signingConfig = getByName("debug").signingConfig
+            signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("release")
             isMinifyEnabled = false
-            proguardFiles("benchmark-proguard-rules.pro")
         }
     }
 
@@ -59,6 +58,9 @@ dependencies {
     
     // Add test rules for GrantPermissionRule
     implementation("androidx.test:rules:1.6.1")
+
+
+
 }
 
 androidComponents {

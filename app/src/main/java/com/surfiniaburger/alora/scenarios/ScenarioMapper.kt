@@ -38,7 +38,7 @@ import com.google.android.gms.maps3d.model.camera
 import com.google.android.gms.maps3d.model.flyAroundOptions
 import com.google.android.gms.maps3d.model.flyToOptions
 import com.google.android.gms.maps3d.model.latLngAltitude
-import com.google.android.gms.maps3d.model.markerOptions
+
 import com.google.android.gms.maps3d.model.modelOptions
 import com.google.android.gms.maps3d.model.orientation
 import com.google.android.gms.maps3d.model.polygonOptions
@@ -246,34 +246,7 @@ fun String.toMaps3DOptions(): Map3DOptions {
     )
 }
 
-fun String.toMarkers(): List<MarkerOptions> {
-    val markersString = this.trim().trimEnd(';')
-    if (markersString.isBlank()) {
-        return emptyList()
-    }
-    return markersString.split(";").mapNotNull { markerStr ->
-        val attributes = markerStr.toAttributesMap()
-        val markerId = attributes["id"]
-        // Basic validation: requires lat, lng
-        if (attributes.containsKey("lat") && attributes.containsKey("lng")) {
-            markerOptions {
-                if (markerId != null) {
-                    id = markerId
-                }
-                collisionBehavior = CollisionBehavior.REQUIRED_AND_HIDES_OPTIONAL
-                position = attributes.toLatLngAltitude()
-                isExtruded = true
-                isDrawnWhenOccluded = true // Consider if this is always desired
-                label = attributes.getString("label", "Marker") // Default label
-                zIndex = attributes.getInt("z", 1) // Default zIndex
-                this.altitudeMode = parseAltitudeMode(attributes.getString("altMode"))
-            }
-        } else {
-            Log.w(TAG, "Skipping invalid marker definition (missing lat/lng): $markerStr")
-            null // Skip invalid marker definitions
-        }
-    }
-}
+
 
 fun String.toModels(): List<ModelOptions> {
     val modelsString = this.trim().trimEnd(';')
@@ -442,19 +415,38 @@ fun String.toLatLngAltitudeOrNull(): LatLngAltitude? {
 fun String.toPolyline(idp: String? = null): List<PolylineOptions> {
     val id = idp ?: UUID.randomUUID().toString()
 
-    val encodedPolyline = this.trim()
-    if (encodedPolyline.isBlank()) {
+    val input = this.trim()
+    if (input.isBlank()) {
         Log.w(TAG, "Input polyline string is blank.")
         return emptyList()
     }
 
-    // 1. Decode the encoded string using the assumed extension function
-    val decodedLatLngs: List<LatLng> = try {
-        // IMPORTANT: Replace this with the actual call to your decoder function if the import path is different
-        encodedPolyline.toLatLngList()
-    } catch (e: Exception) {
-        Log.e(TAG, "Failed to decode polyline string: '$encodedPolyline'", e)
-        return emptyList()
+    // Detect if this is raw coordinates (contains commas and newlines) or encoded polyline
+    val isRawCoordinates = input.contains(",") && (input.contains("\n") || input.lines().size > 1)
+    
+    // 1. Parse coordinates - either raw or encoded
+    val decodedLatLngs: List<LatLng> = if (isRawCoordinates) {
+        // Parse raw lat,lng coordinates (Google's documentation format)
+        try {
+            input.lines()
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
+                .map { line ->
+                    val (lat, lng) = line.split(",").map { it.trim().toDouble() }
+                    LatLng(lat, lng)
+                }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to parse raw coordinates: '$input'", e)
+            return emptyList()
+        }
+    } else {
+        // Parse encoded polyline
+        try {
+            input.toLatLngList()
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to decode polyline string: '$input'", e)
+            return emptyList()
+        }
     }
 
     // 2. Validate decoded points
@@ -466,47 +458,45 @@ fun String.toPolyline(idp: String? = null): List<PolylineOptions> {
         return emptyList()
     }
 
-    // 3. Convert LatLng to LatLngAltitude (assuming Clamp to Mesh behavior)
-    // Altitude value is often ignored when using CLAMP_TO_GROUND or CLAMP_TO_MESH
+    // 3. Convert LatLng to LatLngAltitude (Use CLAMP_TO_GROUND with 0 altitude like sample)
     val points3d: List<LatLngAltitude> = decodedLatLngs.map { latLng ->
         latLngAltitude {
             latitude = latLng.latitude
             longitude = latLng.longitude
-            altitude = 0.0 // Altitude typically ignored for clamping modes
+            altitude = 0.0 
         }
     }
 
-    Log.w(TAG, "Decoded polyline with ${points3d.size} points.")
-    Log.w(TAG, "Decoded polyline [$this]")
+    Log.d(TAG, "Decoded polyline with ${points3d.size} points.")
 
-    val color = 0xff_0f_53_ff.toInt()
+    // Match sample app colors and widths
+    val redColor = Color.RED
+    val blackTransparentColor = Color.argb(128, 0, 0, 0)
 
-    // 4. Create PolylineOptions
-    val polylineOptions = polylineOptions {
+    // Foreground (Red)
+    val polylineOptionsForeground = polylineOptions {
         this.id = id
         this.path = points3d
-        strokeColor = color
+        strokeColor = redColor
         strokeWidth = 7.0
         altitudeMode = AltitudeMode.CLAMP_TO_GROUND
         zIndex = 5
-        outerColor = color
-        outerWidth = 1.0
+        drawsOccludedSegments = true
     }
 
+    // Background (Black Stroke)
     val polylineOptionsBackground = polylineOptions {
         this.id = id + "_background"
         this.path = points3d
-        strokeColor = Color.argb(128, 0, 0, 0)
+        strokeColor = blackTransparentColor
         strokeWidth = 13.0
         altitudeMode = AltitudeMode.CLAMP_TO_GROUND
-        zIndex = 2
-        outerColor = color
-        outerWidth = 1.0
+        zIndex = 3
+        drawsOccludedSegments = true
     }
 
-    // 5. Return a list containing the single PolylineOptions
-    Log.d(TAG, "Successfully created PolylineOptions with ${points3d.size} points.")
-    return listOf(polylineOptions, polylineOptionsBackground)
+    // Return both
+    return listOf(polylineOptionsBackground, polylineOptionsForeground)
 }
 
 // --- Helper Functions ---
