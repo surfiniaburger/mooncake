@@ -474,8 +474,8 @@ fun String.toPolyline(idp: String? = null): List<PolylineOptions> {
     val blackTransparentColor = Color.argb(128, 0, 0, 0)
 
     // Define z-index values for clarity
-    val foregroundZIndex = 5f
-    val backgroundZIndex = 3f
+    val foregroundZIndex = 5
+    val backgroundZIndex = 3
 
     // Foreground (Red)
     val polylineOptionsForeground = polylineOptions {
