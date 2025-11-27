@@ -17,6 +17,7 @@ package com.surfiniaburger.alora.scenarios
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.surfiniaburger.alora.common.Map3dViewModel
+import com.surfiniaburger.alora.common.ResultState
 import com.surfiniaburger.alora.data.RaceStrategyRepository
 import com.google.android.gms.maps3d.model.Camera
 import com.google.android.gms.maps3d.model.camera
@@ -53,6 +54,8 @@ data class ScenarioViewState(
   val countDown: Int = 0,
   val countDownVisible: Boolean = false,
   val showFinished: Boolean = false,
+  val isMapLoaded: Boolean = false,
+  val mapError: String? = null,
 )
 
 private val NEUSCHWANSTEIN_COORDS = latLngAltitude {
@@ -71,7 +74,8 @@ private val NEUSCHWANSTEIN_CAMERA = camera {
 
 @HiltViewModel
 class ScenariosViewModel @Inject constructor(
-  private val repository: RaceStrategyRepository
+  private val repository: RaceStrategyRepository,
+  private val networkMonitor: com.surfiniaburger.alora.utils.NetworkMonitor
 ) : Map3dViewModel() {
   override val TAG = this::class.java.simpleName
   private val _viewState = MutableStateFlow(ScenarioViewState())
@@ -84,8 +88,10 @@ class ScenariosViewModel @Inject constructor(
   private val _roll = MutableStateFlow(DEFAULT_ROLL)
   val roll = _roll as StateFlow<Double>
 
-  private val _strategyResult = MutableStateFlow("")
+  private val _strategyResult = MutableStateFlow<ResultState<String>>(ResultState.Loading)
   val strategyResult = _strategyResult.asStateFlow()
+
+  val isOnline = networkMonitor.isOnline
 
   private val BARBER_COORDS = latLngAltitude {
     latitude = 33.5325
@@ -131,12 +137,31 @@ class ScenariosViewModel @Inject constructor(
     }
 
     // Initialize SSE connection once
-    viewModelScope.launch {
-      _strategyResult.value = "Connecting to Race Control..."
+    connectToRaceControl()
+  }
+
+  private var connectionJob: Job? = null
+
+  private fun connectToRaceControl() {
+    connectionJob?.cancel()
+    connectionJob = viewModelScope.launch {
+      _strategyResult.value = ResultState.Loading
       repository.getRaceStrategy().collect { resultFromServer ->
         _strategyResult.value = resultFromServer
       }
     }
+  }
+
+  fun retryConnection() {
+    connectToRaceControl()
+  }
+
+  fun onMapLoaded() {
+    _viewState.value = _viewState.value.copy(isMapLoaded = true, mapError = null)
+  }
+
+  fun onMapError(error: String) {
+    _viewState.value = _viewState.value.copy(isMapLoaded = false, mapError = error)
   }
 
   /**
@@ -506,7 +531,6 @@ class ScenariosViewModel @Inject constructor(
 
   fun runSimulation() {
     viewModelScope.launch {
-      _strategyResult.value = "Requesting Simulation..."
       repository.triggerSimulation()
     }
   }

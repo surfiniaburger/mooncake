@@ -40,13 +40,14 @@ internal fun ThreeDMap(
         object : OnMap3DViewReadyCallback {
           override fun onMap3DViewReady(googleMap3D: GoogleMap3D) {
             viewModel.setGoogleMap3D(googleMap3D)
+            viewModel.onMapLoaded() // Notify that map loaded successfully
             googleMap3D.setOnMapSteadyListener { isSceneSteady ->
                 viewModel.onMapSteadyChange(isSceneSteady)
             }
           }
 
           override fun onError(error: Exception) {
-            throw error
+            viewModel.onMapError(error.message ?: "Unknown map error")
           }
         }
       )
