@@ -20,8 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.surfiniaburger.alora.common.ErrorType
+import com.surfiniaburger.alora.common.ResultState
 import com.surfiniaburger.alora.scenarios.ScenarioScreen
 import com.surfiniaburger.alora.scenarios.ScenariosViewModel
+import com.surfiniaburger.alora.ui.ErrorScreen
+import com.surfiniaburger.alora.ui.LoadingScreen
 import com.surfiniaburger.alora.ui.RaceHud
 import com.surfiniaburger.alora.ui.theme.AloraTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,23 +53,23 @@ class MainActivity : ComponentActivity() {
                         when {
                             // Show error screen if offline
                             !isOnline -> {
-                                com.surfiniaburger.alora.ui.ErrorScreen(
-                                    errorType = com.surfiniaburger.alora.common.ErrorType.NETWORK_ERROR,
+                                ErrorScreen(
+                                    errorType = ErrorType.NETWORK_ERROR,
                                     message = "No internet connection",
-                                    onRetry = { /* Network will auto-reconnect */ }
+                                    onRetry = null // Network will auto-reconnect
                                 )
                             }
                             // Show error screen if map failed to load
                             viewState.mapError != null -> {
-                                com.surfiniaburger.alora.ui.ErrorScreen(
-                                    errorType = com.surfiniaburger.alora.common.ErrorType.GENERIC,
+                                ErrorScreen(
+                                    errorType = ErrorType.GENERIC,
                                     message = viewState.mapError,
                                     onRetry = { viewModel.setScenario("race_strategy") }
                                 )
                             }
                             // Show loading screen while map is loading
                             !viewState.isMapLoaded -> {
-                                com.surfiniaburger.alora.ui.LoadingScreen()
+                                LoadingScreen()
                             }
                             // Show normal content when everything is ready
                             else -> {
@@ -86,9 +90,9 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 // Show error overlay for SSE connection errors
-                                if (strategyResult is com.surfiniaburger.alora.common.ResultState.Error) {
-                                    val error = strategyResult as com.surfiniaburger.alora.common.ResultState.Error
-                                    com.surfiniaburger.alora.ui.ErrorScreen(
+                                if (strategyResult is ResultState.Error) {
+                                    val error = strategyResult as ResultState.Error
+                                    ErrorScreen(
                                         errorType = error.type,
                                         message = error.message,
                                         onRetry = { viewModel.retryConnection() }
