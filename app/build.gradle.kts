@@ -32,10 +32,15 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
     signingConfigs {
         create("release") {
-            storeFile = file("../release-keystore.jks")
-            storePassword = System.getenv("ALORA_KEYSTORE_PASSWORD") ?: error("ALORA_KEYSTORE_PASSWORD environment variable not set")
-            keyAlias = "alora_release"
-            keyPassword = System.getenv("ALORA_KEY_PASSWORD") ?: error("ALORA_KEY_PASSWORD environment variable not set")
+            val keystorePwd = System.getenv("ALORA_KEYSTORE_PASSWORD")
+            val keyPwd = System.getenv("ALORA_KEY_PASSWORD")
+            
+            if (keystorePwd != null && keyPwd != null) {
+                storeFile = file("../release-keystore.jks")
+                storePassword = keystorePwd
+                keyAlias = "alora_release"
+                keyPassword = keyPwd
+            }
         }
     }
 
@@ -127,6 +132,8 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.sse)
     testImplementation(libs.gson)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
 
 secrets {

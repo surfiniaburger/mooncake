@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
             val viewModel: ScenariosViewModel = hiltViewModel()
             val viewState by viewModel.viewState.collectAsStateWithLifecycle()
             val strategyResult by viewModel.strategyResult.collectAsStateWithLifecycle()
+            val isOnline by viewModel.isOnline.collectAsStateWithLifecycle(initialValue = true)
 
             // Set the scenario to "race_strategy" when the app starts
             LaunchedEffect(Unit) {
@@ -44,20 +45,56 @@ class MainActivity : ComponentActivity() {
             AloraTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-                        viewState.scenario?.let { scenario ->
-                            ScenarioScreen(
-                                modifier = Modifier.fillMaxSize(),
-                                scenario = scenario,
-                                viewModel = viewModel,
-                            )
-                            RaceHud(
-                                strategyText = strategyResult,
-                                onRunSimulation = {
-                                    viewModel.flyToBarber()
-                                    viewModel.runSimulation()
-                                },
-                                modifier = Modifier.align(Alignment.TopStart)
-                            )
+                        // Determine what to show based on state
+                        when {
+                            // Show error screen if offline
+                            !isOnline -> {
+                                com.surfiniaburger.alora.ui.ErrorScreen(
+                                    errorType = com.surfiniaburger.alora.common.ErrorType.NETWORK_ERROR,
+                                    message = "No internet connection",
+                                    onRetry = { /* Network will auto-reconnect */ }
+                                )
+                            }
+                            // Show error screen if map failed to load
+                            viewState.mapError != null -> {
+                                com.surfiniaburger.alora.ui.ErrorScreen(
+                                    errorType = com.surfiniaburger.alora.common.ErrorType.GENERIC,
+                                    message = viewState.mapError,
+                                    onRetry = { viewModel.setScenario("race_strategy") }
+                                )
+                            }
+                            // Show loading screen while map is loading
+                            !viewState.isMapLoaded -> {
+                                com.surfiniaburger.alora.ui.LoadingScreen()
+                            }
+                            // Show normal content when everything is ready
+                            else -> {
+                                viewState.scenario?.let { scenario ->
+                                    ScenarioScreen(
+                                        modifier = Modifier.fillMaxSize(),
+                                        scenario = scenario,
+                                        viewModel = viewModel,
+                                    )
+                                    RaceHud(
+                                        strategyState = strategyResult,
+                                        onRunSimulation = {
+                                            viewModel.flyToBarber()
+                                            viewModel.runSimulation()
+                                        },
+                                        modifier = Modifier.align(Alignment.TopStart)
+                                    )
+                                }
+
+                                // Show error overlay for SSE connection errors
+                                if (strategyResult is com.surfiniaburger.alora.common.ResultState.Error) {
+                                    val error = strategyResult as com.surfiniaburger.alora.common.ResultState.Error
+                                    com.surfiniaburger.alora.ui.ErrorScreen(
+                                        errorType = error.type,
+                                        message = error.message,
+                                        onRetry = { viewModel.retryConnection() }
+                                    )
+                                }
+                            }
                         }
                     }
                 }

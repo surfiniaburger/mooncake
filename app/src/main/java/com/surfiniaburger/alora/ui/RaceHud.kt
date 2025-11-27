@@ -16,10 +16,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.surfiniaburger.alora.common.ResultState
 
 @Composable
 fun RaceHud(
-    strategyText: String,
+    strategyState: ResultState<String>,
     onRunSimulation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,8 +39,14 @@ fun RaceHud(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             
+            val displayText = when (strategyState) {
+                is ResultState.Loading -> "Connecting..."
+                is ResultState.Success -> strategyState.data
+                is ResultState.Error -> "Error: ${strategyState.message}" // Fallback for small HUD
+            }
+
             Text(
-                text = strategyText.ifEmpty { "Ready to simulate..." },
+                text = displayText.ifEmpty { "Ready to simulate..." },
                 color = Color.White,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
@@ -48,7 +55,8 @@ fun RaceHud(
             
             Button(
                 onClick = onRunSimulation,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                enabled = strategyState !is ResultState.Loading
             ) {
                 Text("RUN SIMULATION")
             }
