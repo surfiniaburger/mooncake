@@ -47,15 +47,6 @@ class RaceStrategyRepository @Inject constructor(
         val listener = object : EventSourceListener() {
             override fun onOpen(eventSource: EventSource, response: Response) {
                 Log.d("RaceStrategyRepo", "SSE Connection Opened")
-                // Check for 404 or 500 here if response is not successful, though onOpen usually implies 200 OK for SSE
-                if (!response.isSuccessful) {
-                     val errorType = when (response.code) {
-                        404 -> ErrorType.NOT_FOUND
-                        in 500..599 -> ErrorType.SERVER_ERROR
-                        else -> ErrorType.GENERIC
-                    }
-                    trySend(ResultState.Error(errorType, "Connection failed: ${response.code}"))
-                }
             }
 
             override fun onEvent(eventSource: EventSource, id: String?, type: String?, data: String) {
@@ -103,21 +94,16 @@ class RaceStrategyRepository @Inject constructor(
             }
 
             override fun onFailure(eventSource: EventSource, t: Throwable?, response: Response?) {
-                Log.e("RaceStrategyRepo", "SSE Error: ${t?.message}", t)
-                val errorType = if (t is IOException) ErrorType.NETWORK_ERROR else ErrorType.GENERIC
+                Log.e("RaceStrategyRepo", "SSE Failure", t)
                 
-                // Check response code if available
-                val finalErrorType = if (response != null) {
-                     when (response.code) {
-                        404 -> ErrorType.NOT_FOUND
-                        in 500..599 -> ErrorType.SERVER_ERROR
-                        else -> errorType
-                    }
-                } else {
-                    errorType
+                val finalErrorType = when {
+                    response?.code == 404 -> ErrorType.NOT_FOUND
+                    response?.code in 500..599 -> ErrorType.SERVER_ERROR
+                    t is IOException -> ErrorType.NETWORK_ERROR
+                    else -> ErrorType.GENERIC
                 }
-                
-                trySend(ResultState.Error(finalErrorType, t?.message ?: "Connection failed."))
+
+                trySend(ResultState.Error(finalErrorType, t?.message ?: "Connection failed"))
                 close(t)
             }
         }

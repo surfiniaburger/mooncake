@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -32,26 +35,41 @@ import com.surfiniaburger.alora.common.ErrorType
 fun ErrorScreen(
     errorType: ErrorType,
     message: String?,
-    onRetry: () -> Unit,
+    onRetry: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
-    val (icon, title, defaultMessage) = when (errorType) {
-        ErrorType.NOT_FOUND -> Triple(Icons.Default.Info, "Resource Not Found", "The requested resource could not be found (404).")
-        ErrorType.SERVER_ERROR -> Triple(Icons.Default.Warning, "Server Error", "Something went wrong on the server (500).")
-        ErrorType.NETWORK_ERROR -> Triple(Icons.Default.Warning, "Network Error", "Please check your internet connection.")
-        ErrorType.GENERIC -> Triple(Icons.Default.Warning, "Error", "An unexpected error occurred.")
+    val (icon, title, description) = when (errorType) {
+        ErrorType.NOT_FOUND -> Triple(
+            Icons.Default.Search,
+            "Not Found",
+            "The requested resource could not be found."
+        )
+        ErrorType.SERVER_ERROR -> Triple(
+            Icons.Default.Warning,
+            "Server Error",
+            "The server encountered an error. Please try again later."
+        )
+        ErrorType.NETWORK_ERROR -> Triple(
+            Icons.Default.WifiOff,
+            "Network Error",
+            "Please check your internet connection."
+        )
+        ErrorType.GENERIC -> Triple(
+            Icons.Default.Error,
+            "Error",
+            "Something went wrong."
+        )
     }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(24.dp),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.padding(32.dp)
         ) {
             Icon(
                 imageVector = icon,
@@ -59,28 +77,36 @@ fun ErrorScreen(
                 modifier = Modifier.size(64.dp),
                 tint = MaterialTheme.colorScheme.error
             )
+
             Spacer(modifier = Modifier.height(16.dp))
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Text(
-                text = message ?: defaultMessage,
+                text = message ?: description,
                 style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = onRetry,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
-                Spacer(modifier = Modifier.size(8.dp))
-                Text("Retry")
+
+            // Only show retry button if onRetry is provided
+            onRetry?.let { retryAction ->
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = retryAction,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text("Retry")
+                }
             }
         }
     }
